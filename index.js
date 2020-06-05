@@ -20,6 +20,8 @@ const ADDROOMWORD = '/私聊机器人的关键词/'
 
 
 // 实例化
+roomList = 
+
 const bot = new Wechaty({name:'robot'})
 
 bot.on('scan',    onScan)
@@ -58,26 +60,23 @@ function onLogout(user) {
 async function onMessage (msg) {
 	const contact = msg.from() // 发消息人
   const content = msg.text() //消息内容
-	const room = msg.room() //是否是群消息
 	// 1.机器人自己发的消息
 	if (msg.self()) return
-
+	// 2.非群消息 且为个人发送
 	if (contact.type() === bot.Contact.Type.Personal) { 
-		// 3.非群消息 且为个人发送
 		// console.log(bot.Contact.Type.Official, bot.Contact.Type.Personal, bot.Contact.Type.Unknown); // 2 1 0
 		console.log(`[消息源-个人], 发信人： ${contact.name()}, 消息内容: ${content}`)
-		if(eval(ADDROOMWORD).test(content)){
-			let targetRoom = await this.Room.find({topic: eval(ROOMNAME)})
-			if(targetRoom){
-				try {
-					let hasInRoom = await targetRoom.has(contact)
-					console.log(`[存在判断]当前用户是否已在群里：${hasInRoom}`);
-					if (hasInRoom) return
-					// 40人以下的群，是直接拉用户进群的。 40人以上的群，是发送入群邀请链接的。
-					await targetRoom.add(contact)
-				} catch (e) {
-					console.error(e)
-				}
+		const room = roomList[parseInt(content)]
+		let targetRoom = await this.Room.find({topic: room})
+		if(targetRoom){
+			try {
+				let hasInRoom = await targetRoom.has(contact)
+				console.log(`[存在判断]当前用户是否已在群里：${hasInRoom}`);
+				if (hasInRoom) return
+				// 40人以下的群，是直接拉用户进群的。 40人以上的群，是发送入群邀请链接的。
+				await targetRoom.add(contact)
+			} catch (e) {
+				console.error(e)
 			}
 		}
 	}
