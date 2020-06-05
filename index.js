@@ -62,30 +62,7 @@ async function onMessage (msg) {
 	// 1.机器人自己发的消息
 	if (msg.self()) return
 
-  if(room){
-		// 2.群消息
-		const topic = await room.topic()
-		// console.log(`[消息源-群] 群名：${topic}, 是否是当前设置的群：${eval(ROOMNAME).test(topic)}`);
-		if (eval(ROOMNAME).test(topic)) {
-			// 此消息来自于设置的 ROOMNAME
-			let isAT = await msg.mentionSelf()
-			// 机器人没有被@ 则结束流程
-			if (!isAT) return
-
-			// 机器人被@
-			console.log(`[消息源-群] 群名: ${topic} 发消息人: ${contact.name()} 内容: ${content.replace(`@${ROBOTNAME}`, '').trim()}`)
-			let realContent = content.replace(`@${ROBOTNAME}`, '').trim()
-			let reply = await api.getAnswer(realContent)
-			try{
-				await room.say(reply, contact)
-				console.log(`[回复成功]机器人自动回复内容：${reply}`)
-			}catch (e) {
-				console.error('[回复失败]', e)
-			}
-		} else {
-			// 此消息不是来自于设置的 ROOMNAME
-		}
-	} else if (contact.type() === bot.Contact.Type.Personal) { 
+	if (contact.type() === bot.Contact.Type.Personal) { 
 		// 3.非群消息 且为个人发送
 		// console.log(bot.Contact.Type.Official, bot.Contact.Type.Personal, bot.Contact.Type.Unknown); // 2 1 0
 		console.log(`[消息源-个人], 发信人： ${contact.name()}, 消息内容: ${content}`)
@@ -119,17 +96,11 @@ async function onFriendShip(friendship) {
 		const contact = friendship.contact()
 		console.log(`[好友申请]来自于：${contact.name()}`)
 
-		if (eval(ADDFRIENDWORD).test(friendship.hello())) {
-			console.log(`[验证通过]因为验证信息中带关键字'${friendship.hello()}'`)
-			await friendship.accept()
-			console.log('[添加成功]')
-			console.log('============================')
-			await sleep()
-			await contact.say(`哈喽~ ${contact.name()}<br>很高兴认识你<br>我是群管理小助手<br><br>加入【小程序交流群】, 请回复 1<br>然后稍等几秒就能收到群邀请`)
-		} else {
-			console.log(`[验证失败]'验证信息为：${friendship.hello()}'`)
-		}
-
+		await friendship.accept()
+		console.log('[添加成功]')
+		console.log('============================')
+		await sleep()
+		await contact.say(`哈喽~ ${contact.name()}<br>很高兴认识你<br>我是群管理小助手<br><br>加入【小程序交流群】, 请回复 1<br>然后稍等几秒就能收到群邀请`)
   } catch (e) {
 		console.log(e.message);
   }
