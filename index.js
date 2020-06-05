@@ -20,7 +20,7 @@ const ADDROOMWORD = '/私聊机器人的关键词/'
 
 
 // 实例化
-roomList = 
+var roomList = []
 
 const bot = new Wechaty({name:'robot'})
 
@@ -49,17 +49,19 @@ function onScan (code, status) {
 // 登录
 function onLogin (user) {
   console.log(`[登录]群助手 ${user.name()} 登录了`)
+  roomList = await this.Room.findAll()
 }
 
 //登出
 function onLogout(user) {
   console.log(`[登出]群助手 ${user.name()} 登出`)
+  roomList = []
 }
 
 // 监听对话
 async function onMessage (msg) {
 	const contact = msg.from() // 发消息人
-  const content = msg.text() //消息内容
+	const content = msg.text() //消息内容
 	// 1.机器人自己发的消息
 	if (msg.self()) return
 	// 2.非群消息 且为个人发送
@@ -99,7 +101,11 @@ async function onFriendShip(friendship) {
 		console.log('[添加成功]')
 		console.log('============================')
 		await sleep()
-		await contact.say(`哈喽~ ${contact.name()}<br>很高兴认识你<br>我是群管理小助手<br><br>加入【小程序交流群】, 请回复 1<br>然后稍等几秒就能收到群邀请`)
+		await contact.say(`哈喽~ ${contact.name()}<br>很高兴认识你<br>我是群管理小助手<br><br>加入【小程序交流群】, 请回复数字`)
+	  	roomList.forEach(element, index => { 
+			await contact.say(`${index} --- ${element}`)
+		})
+	  	await contact.say(`然后稍等几秒就能收到群邀请`)
   } catch (e) {
 		console.log(e.message);
   }
