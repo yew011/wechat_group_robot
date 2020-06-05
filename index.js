@@ -6,19 +6,6 @@ const {Wechaty} = require('wechaty')
 const qrcode = require('qrcode-terminal')
 const api = require('./common/api')
 
-
-/************************  常量   ***************************/
-
-
-const ROBOTNAME = '你的机器人微信号' // 机器人微信名
-const ROOMNAME = '/^你的群名/i' //群名
-const ADDFRIENDWORD = '/加群验证的关键词/i'//自动加好友填写的关键词
-const ADDROOMWORD = '/私聊机器人的关键词/'
-
-/***********************************************************/
-
-
-
 // 实例化
 var roomList = []
 
@@ -116,10 +103,8 @@ function onRoomJoin(room, inviteeList, inviter) {
 	console.log('---------')
   const nameList = inviteeList.map(c => c.name()).join(',')
   room.topic().then(function (res) {
-		if(eval(ROOMNAME).test(res)){
-			console.log(`[加群提醒] 群名： ${res} ，加入新成员： ${nameList}, 邀请人： ${inviter}`)
-			room.say(`@${nameList} <br>🎉欢迎新朋友~~<br>🎉有什么问题都可以在群里提出哈~~`)
-		}
+		console.log(`[加群提醒] 群名： ${res} ，加入新成员： ${nameList}, 邀请人： ${inviter}`)
+		room.say(`@${nameList} <br>🎉欢迎新朋友~~<br>🎉有什么问题都可以在群里提出哈~~`)
   })
 }
 
