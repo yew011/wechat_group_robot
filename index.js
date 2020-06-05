@@ -4,7 +4,6 @@
 
 const {Wechaty} = require('wechaty')
 const qrcode = require('qrcode-terminal')
-const api = require('./common/api')
 
 // 实例化
 var roomList = []
@@ -36,7 +35,7 @@ function onScan (code, status) {
 // 登录
 function onLogin (user) {
   console.log(`[登录]群助手 ${user.name()} 登录了`)
-  roomList = await this.Room.findAll()
+  roomList = this.Room.findAll()
 }
 
 //登出
@@ -89,8 +88,8 @@ async function onFriendShip(friendship) {
 		console.log('============================')
 		await sleep()
 		await contact.say(`哈喽~ ${contact.name()}<br>很高兴认识你<br>我是群管理小助手<br><br>加入【小程序交流群】, 请回复数字`)
-	  	roomList.forEach(element, index => { 
-			await contact.say(`${index} --- ${element}`)
+	  	roomList.forEach(element, index => {
+			contact.say(`${index} --- ${element}`)
 		})
 	  	await contact.say(`然后稍等几秒就能收到群邀请`)
   } catch (e) {
